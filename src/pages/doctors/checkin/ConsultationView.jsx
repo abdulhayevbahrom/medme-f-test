@@ -39,6 +39,7 @@ import {
   Col,
   Modal,
   Checkbox,
+  List,
 } from "antd";
 import "react-toastify/dist/ReactToastify.css";
 import "./style.css";
@@ -48,12 +49,13 @@ import {
   useAssignRoomServicesMutation,
   useGetPatientServicesByPatientIdQuery,
 } from "../../../context/choosedRoomServicesApi";
-import PatientDetailsView from "../../reseption/history/PatientDetailsView";
+import MedicalDashboard from "../../reseption/history/Historys";
 
 const ConsultationView = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
   const workerId = localStorage.getItem("workerId");
+  const [viewHistory, setViewHistory] = useState(false);
   const specialization = localStorage.getItem("specialization");
   const { data, isLoading, isError } = useGetTodaysStoryVisitQuery({
     workerId,
@@ -96,7 +98,38 @@ const ConsultationView = () => {
   const [prescriptions, setPrescriptions] = useState([]);
   const [form] = Form.useForm();
 
-  // Modal state
+  // State for description modal
+  const [isDescriptionModalOpen, setIsDescriptionModalOpen] = useState(false);
+
+  //isModalOpen2
+  const [isModalOpen2, setIsModalOpen2] = useState(false);
+  // List of common prescription descriptions
+  const commonDescriptions = [
+    "Ertalab 1 ta, kechqurun 1 ta, ovqatdan oldin",
+    "Kuniga 2 marta, ovqatdan keyin",
+    "Ertalab 1 ta, ovqat bilan birga",
+    "Kechqurun 1 ta, ovqatdan keyin",
+    "Kuniga 3 marta, har 8 soatda",
+    "Ertalab va kechqurun, ovqatdan 30 daqiqa oldin",
+    "Kuniga 1 marta, kechqurun",
+    "Ovqatdan keyin 2 ta, kuniga 1 marta",
+
+    // qo‘shimcha 10 ta
+    "Kuniga 3 marta, ovqatdan keyin",
+    "Har 6 soatda 1 ta",
+    "Ertalab och qoringa 1 ta",
+    "Kechasi uxlashdan oldin 1 ta",
+    "Kuniga 2 marta, yarim stakan suv bilan",
+    "Kuniga 1 marta, ertalab och qoringa",
+    "Og‘riq bo‘lsa, 1 ta, lekin kuniga 3 martadan ko‘p emas",
+    "Har 12 soatda 1 ta",
+    "Ovqatdan keyin 1 ta, kuniga 2 marta",
+    "Kuniga 4 marta, har 6 soatda",
+  ];
+
+
+
+  // Modal state for doctor selection
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDoctorServices, setSelectedDoctorServices] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -116,9 +149,7 @@ const ConsultationView = () => {
   const { data: roomServices } = useGetRoomServicesQuery();
   const roomServicesData = roomServices?.innerData || [];
 
-  // const [selectedPatient, setSelectedPatient] = React.useState(null);
-  const [selectedServices, setSelectedServices] = React.useState({});
-  const [isModalOpen2, setIsModalOpen2] = React.useState(false);
+  const [selectedServices, setSelectedServices] = useState({});
   const [selectedReabilitationServices, setSelectedRehabilitationServices] =
     useState([]);
 
@@ -195,7 +226,7 @@ const ConsultationView = () => {
     setIsSubmitting(true);
     const consultationData = {
       diagnosis,
-      prescriptions, // Send array of prescriptions instead of single string
+      prescriptions,
       recommendations,
       description,
     };
@@ -206,7 +237,6 @@ const ConsultationView = () => {
         consultationData,
         files: uploadedFiles,
         workerId,
-        // reabilitationServices: selectedReabilitationServices,
       }).unwrap();
       setSendData(data);
       toast.success("Qabul muvaffaqiyatli yakunlandi!");
@@ -408,6 +438,7 @@ const ConsultationView = () => {
     setIsModalOpen2(false);
     setSelectedServices({});
   };
+
   const handleOk = async () => {
     const servicesArray = Object.entries(selectedServices)
       .filter(([_, val]) => val.selected && val.part && val.quantity > 0)
@@ -436,20 +467,28 @@ const ConsultationView = () => {
     }, 1000);
   };
 
-  const [viewHistory, setViewHistory] = useState(false);
+  // Handler for opening description modal
+  const showDescriptionModal = () => {
+    setIsDescriptionModalOpen(true);
+  };
+
+  // Handler for selecting a description from the modal
+  const handleDescriptionSelect = (description) => {
+    form.setFieldsValue({ description: description }); // Set the description in the form
+    setDescription(description); // Update the local state to reflect in the UI
+    setIsDescriptionModalOpen(false); // Close the modal
+    toast.success("Tavsif tanlandi!");
+  };
 
   return (
     <div className="consultation-container">
-      {viewHistory ? (
-        <PatientDetailsView
-          patient={selectedPatient}
-          patientServicesData={
-            patientServicesData?.innerData || roomServicesData?.innerData || []
-          }
-          // setSelectedPatient={() => setViewHistory(false)}
-        />
-      ) : (
-        ""
+      {viewHistory && (
+        <div className="consultation-containerhisbox">
+          <MedicalDashboard
+            setViewHistory={setViewHistory}
+            patientId={data?.innerData?.patientId?._id}
+          />
+        </div>
       )}
       <div className="consultation-header">
         <div className="detail-item-conat">
@@ -465,7 +504,12 @@ const ConsultationView = () => {
           </div>
         </div>
         <div className="detail-item-conat">
-          <button onClick={() => setViewHistory(true)}>tarix</button>
+          <button
+            className="detail-btn"
+            onClick={() => setViewHistory(true)}
+          >
+            Tarix
+          </button>
           <div className="detail-item-box">
             <div className="detail-item">
               <MdCall className="detail-icon" />
@@ -710,18 +754,56 @@ const ConsultationView = () => {
                     label="Tavsif"
                     rules={[{ required: true, message: "Tavsifni kiriting" }]}
                   >
-                    <Input.TextArea
-                      placeholder="Masalan: Ertalab 1 ta, kechqurun 1 ta, ovqatdan oldin"
-                      rows={1}
-                      style={{
-                        borderRadius: "4px",
-                        resize: "none",
-                        height: "80px",
-                      }}
-                    />
+                    <div className="tavsifselectBox">
+                      <Input.TextArea
+                        placeholder="Masalan: Ertalab 1 ta, kechqurun 1 ta, ovqatdan oldin"
+                        rows={1}
+                        style={{
+                          borderRadius: "4px",
+                          resize: "none",
+                          height: "80px",
+                          flex: 1,
+                        }}
+                        onClick={showDescriptionModal}
+                        value={description} // Bind to local state for display
+                        onChange={(e) => {
+                          setDescription(e.target.value); // Update local state
+                          form.setFieldsValue({ description: e.target.value }); // Sync form
+                        }}
+                      />
+                      {isDescriptionModalOpen && (
+                        <div className="custom-modal">
+                          <div className="custom-modal-header">
+                            <span>Tavsif tanlash</span>
+                            <div className="">
+                              <button
+                                className="custom-modal-close-btn"
+                                onClick={() => setIsDescriptionModalOpen(false)}
+                              >
+                                <span className="close-icon">×</span>
+                              </button>
+                            </div>
+                          </div>
+                          <div className="custom-modal-body">
+                            <List
+                              bordered
+                              dataSource={commonDescriptions}
+                              renderItem={(item) => (
+                                <List.Item
+                                  className="custom-modal-list-item"
+                                  onClick={() => handleDescriptionSelect(item)}
+                                >
+                                  {item}
+                                </List.Item>
+                              )}
+                            />
+                          </div>
+
+                        </div>
+                      )}
+                    </div>
                   </Form.Item>
                 </Col>
-
                 <Col flex="1">
                   <Form.Item
                     name="durationDays"
@@ -812,6 +894,8 @@ const ConsultationView = () => {
         </>
       )}
 
+
+
       <Modal
         width={1000}
         open={isModalOpen2}
@@ -828,7 +912,6 @@ const ConsultationView = () => {
         />
       </Modal>
 
-      {/* Hidden printable component */}
       <div style={{ display: "none" }}>
         <RecordList
           componentRef={contentRef}
@@ -854,7 +937,6 @@ const ConsultationView = () => {
         />
       </div>
 
-      {/* Service Modal */}
       <ServiceModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -863,7 +945,6 @@ const ConsultationView = () => {
         doctorName={selectedDoctorName}
       />
 
-      {/* Toast Container */}
       <ToastContainer
         position="top-right"
         autoClose={5000}

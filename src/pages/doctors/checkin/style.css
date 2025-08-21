@@ -357,6 +357,34 @@
   padding: 10px;
   overflow: auto;
   height: calc(100vh - 60px);
+  position: relative;
+}
+
+.consultation-containerhisbox {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 97vh;
+  background: rgb(255, 255, 255);
+  overflow: auto;
+  padding: 10px;
+  z-index: 999;
+}
+
+.detail-btn {
+  background: linear-gradient(135deg, #27ae60, #2ecc71);
+  color: white;
+  border: none;
+  padding: 10px 2px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
 }
 
 .consultation-header {
@@ -980,6 +1008,88 @@
   animation: slideInRight 0.3s ease-out;
 }
 
+.tavsifselectBox {
+  width: 100%;
+  border-radius: 15px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tavsifselectBox {
+  width: 100%;
+  border-radius: 15px;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  /* Needed for absolute positioning of the modal */
+}
+
+.custom-modal {
+  position: absolute;
+  top: 80px;
+  /* Adjust to appear just below the TextArea (80px height + 5px gap) */
+  left: 0;
+  width: 100% !important;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  /* Ensure it appears above other elements */
+  overflow: hidden;
+}
+
+.custom-modal-header {
+  padding: 5px 10px !important;
+  font-size: 16px;
+  font-weight: 500;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafafa;
+}
+
+.custom-modal-body {
+  padding: 4px;
+  max-height: 300px;
+  /* Limit height to prevent overflow */
+  overflow-y: auto;
+  /* Allow scrolling if content exceeds height */
+}
+
+.custom-modal-body .ant-list-item {
+  padding-inline: 10px !important;
+}
+
+.custom-modal-body .ant-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px !important;
+  color: rgba(0, 0, 0, 0.88);
+}
+
+.custom-modal-list-item {
+  cursor: pointer;
+  padding: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.custom-modal-list-item:hover {
+  background-color: #f5f5f5;
+}
+
+.custom-modal-footer {
+  padding: 16px;
+  border-top: 1px solid #f0f0f0;
+  text-align: right;
+}
+
+.custom-modal-footer .ant-btn {
+  border-radius: 4px;
+}
+
 @keyframes slideInRight {
   from {
     transform: translateX(100%);
@@ -1501,7 +1611,7 @@
 }
 
 .reabilitatsiya-btn {
-   background: linear-gradient(135deg, #2793ae, #2e9fcc);
+  background: linear-gradient(135deg, #2793ae, #2e9fcc);
   color: white;
   border: none;
   padding: 20px 40px;

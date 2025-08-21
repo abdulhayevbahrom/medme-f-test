@@ -27,12 +27,16 @@ import { Table, Tooltip, Checkbox, Button, Radio } from "antd";
 import { CheckCircleOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import ReceiptPrint from "./ReceiptPrint";
 import { useReactToPrint } from "react-to-print";
+import { useNavigate } from "react-router-dom";
+
 import { useCreateExpenseMutation } from "../../../context/expenseApi";
 
 const PatientDetailsView = ({
   patient,
   setSelectedPatient,
   patientServicesData,
+  patientId,
+  setViewHistory
 }) => {
   const [createExpense] = useCreateExpenseMutation();
   const [activeTab, setActiveTab] = useState("overview");
@@ -40,6 +44,7 @@ const PatientDetailsView = ({
 
   const [selectedRehab, setSelectedRehab] = useState({});
   const [showReceipt, setShowReceipt] = useState(false);
+  const navigate = useNavigate();
 
   const tabs = [
     { id: "overview", label: "Umumiy ma'lumot", icon: User },
@@ -67,11 +72,11 @@ const PatientDetailsView = ({
   const getPatientAge = (year) => new Date().getFullYear() - parseInt(year);
 
   const getStatusColor = (status) =>
-    ({
-      normal: "#22c55e",
-      high: "#ef4444",
-      low: "#f59e0b",
-    }[status] || "#6b7280");
+  ({
+    normal: "#22c55e",
+    high: "#ef4444",
+    low: "#f59e0b",
+  }[status] || "#6b7280");
 
   const toggleStory = (id) =>
     setExpandedStories((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -218,22 +223,22 @@ In a real application, this would contain the actual file data.`;
     },
     ...(role === "reception"
       ? [
-          {
-            title: "Tanlash",
-            width: 40,
-            render: (_, item) => (
-              <Checkbox
-                // checked={isChecked(item.dailyTracking)}
-                onChange={(e) =>
-                  setSelectedRehab((prev) => ({
-                    ...prev,
-                    [item._id]: e.target.checked,
-                  }))
-                }
-              />
-            ),
-          },
-        ]
+        {
+          title: "Tanlash",
+          width: 40,
+          render: (_, item) => (
+            <Checkbox
+              // checked={isChecked(item.dailyTracking)}
+              onChange={(e) =>
+                setSelectedRehab((prev) => ({
+                  ...prev,
+                  [item._id]: e.target.checked,
+                }))
+              }
+            />
+          ),
+        },
+      ]
       : []),
     {
       title: "Muolaja nomi",
@@ -350,7 +355,13 @@ In a real application, this would contain the actual file data.`;
     <div className="patient-details">
       <div className="patient-details-header">
         <button
-          onClick={() => setSelectedPatient(null)}
+          onClick={() => {
+            patientId ?
+              setViewHistory(false)
+              :
+              setSelectedPatient(null)
+          }
+          }
           className="back-button"
         >
           <ArrowLeft size={20} /> Orqaga
@@ -559,9 +570,8 @@ In a real application, this would contain the actual file data.`;
                       {formatDate(visit.createdAt)}
                     </div>
                     <span
-                      className={`visit-status ${
-                        visit.payment_status ? "completed" : "pending"
-                      }`}
+                      className={`visit-status ${visit.payment_status ? "completed" : "pending"
+                        }`}
                     >
                       {visit.payment_status ? "Tugallangan" : "Kutilmoqda"}
                     </span>
@@ -616,9 +626,8 @@ In a real application, this would contain the actual file data.`;
                           {formatDate(story.createdAt)}
                         </div>
                         <span
-                          className={`prescription-status ${
-                            story.payment_status ? "active" : "expired"
-                          }`}
+                          className={`prescription-status ${story.payment_status ? "active" : "expired"
+                            }`}
                         >
                           {story.payment_status ? "Faol" : "Tugagan"}
                         </span>
@@ -749,9 +758,8 @@ In a real application, this would contain the actual file data.`;
                       <span className="ward-department">Bo'lim N/A</span>
                     </div>
                     <span
-                      className={`ward-status ${
-                        room.active ? "active" : "completed"
-                      }`}
+                      className={`ward-status ${room.active ? "active" : "completed"
+                        }`}
                     >
                       <Bed size={14} />
                       {room.active ? "Faol" : "Tugagan"}

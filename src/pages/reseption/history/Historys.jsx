@@ -18,11 +18,24 @@ import {
   useGetRoomServicesStoryQuery,
 } from "../../../context/choosedRoomServicesApi";
 
-const MedicalDashboard = () => {
+const MedicalDashboard = ({ patientId, setViewHistory }) => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [filterStatus, setFilterStatus] = useState("all");
   const { searchQuery: searchTerm } = useSelector((state) => state.search);
   const { data, error, isLoading } = useGetAllPatientsStoryQuery();
+
+  // Find the patient by patientId from props if provided
+  const initialPatient = useMemo(() => {
+    if (!patientId || !data?.success || !data?.data) return null;
+    return data.data.find((patient) => patient._id === patientId) || null;
+  }, [data, patientId]);
+
+  // Set selected patient only if patientId is provided and found
+  useMemo(() => {
+    if (initialPatient) {
+      setSelectedPatient(initialPatient);
+    }
+  }, [initialPatient]);
 
   const { data: patientServicesData } = useGetPatientServicesByPatientIdQuery(
     selectedPatient?.stories?.[0]?.patientId?._id || "",
@@ -44,7 +57,6 @@ const MedicalDashboard = () => {
     if (!data?.success || !data?.data) return [];
 
     return data.data.map((patient) => {
-      // Safely calculate unpaid amounts
       const unpaidStoriesAmount = (patient.stories || [])
         .filter((story) => !story.payment_status)
         .reduce((sum, story) => sum + (story.payment_amount || 0), 0);
@@ -56,7 +68,6 @@ const MedicalDashboard = () => {
 
       const totalUnpaidAmount = unpaidStoriesAmount + unpaidRoomDaysAmount;
 
-      // Determine statuses
       const hasActiveRoomStory = (patient.roomStories || []).some(
         (room) => room.active
       );
@@ -67,7 +78,6 @@ const MedicalDashboard = () => {
         (room.paidDays || []).some((day) => !day.isPaid)
       );
 
-      // Determine last visit
       const lastStoryDate =
         patient.stories?.length > 0
           ? patient.stories[patient.stories.length - 1].createdAt
@@ -91,7 +101,7 @@ const MedicalDashboard = () => {
           hasActiveRoomStory ||
           (hasUnpaidStories &&
             new Date(lastVisit) >
-              new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
+            new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)),
         debtor:
           patient.debtor ||
           hasUnpaidRoomDays ||
@@ -144,8 +154,20 @@ const MedicalDashboard = () => {
       <div className="history-dashboard">
         <div className="error-container">
           <div className="error-message">
-            Xatolik yuz berdi:{" "}
-            {error.message || "Ma'lumotlarni yuklashda xatolik"}
+            Xatolik yuz berdi: {error.message || "Ma'lumotlarni yuklashda xatolik"}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // If patientId is provided but no patient is found, show error
+  if (patientId && !selectedPatient) {
+    return (
+      <div className="history-dashboard">
+        <div className="error-container">
+          <div className="error-message">
+            Bemor topilmadi: ID {patientId}
           </div>
         </div>
       </div>
@@ -231,9 +253,8 @@ const MedicalDashboard = () => {
               filteredPatients.map((patient) => (
                 <div
                   key={patient._id}
-                  className={`patient-card ${
-                    patient.treating ? "treating" : ""
-                  } ${patient.debtor ? "debtor" : ""}`}
+                  className={`patient-card ${patient.treating ? "treating" : ""} ${patient.debtor ? "debtor" : ""
+                    }`}
                   onClick={() => setSelectedPatient(patient)}
                 >
                   <div className="patient-avatar">
@@ -253,9 +274,7 @@ const MedicalDashboard = () => {
                     <p>
                       Yosh: {patient.year || "N/A"} yil{" "}
                       {patient.year
-                        ? `(${
-                            new Date().getFullYear() - parseInt(patient.year)
-                          } yoshda)`
+                        ? `(${new Date().getFullYear() - parseInt(patient.year)} yoshda)`
                         : ""}
                     </p>
                     <p>
@@ -263,12 +282,12 @@ const MedicalDashboard = () => {
                       {patient.gender === "erkak"
                         ? "Erkak"
                         : patient.gender === "ayol"
-                        ? "Ayol"
-                        : patient.gender === "male"
-                        ? "Erkak"
-                        : patient.gender === "female"
-                        ? "Ayol"
-                        : "N/A"}
+                          ? "Ayol"
+                          : patient.gender === "male"
+                            ? "Erkak"
+                            : patient.gender === "female"
+                              ? "Ayol"
+                              : "N/A"}
                     </p>
                     {patient.totalUnpaidAmount > 0 && (
                       <p className="unpaid-amount">
@@ -290,18 +309,14 @@ const MedicalDashboard = () => {
                       </span>
                     )}
                     <span className="visit-info">
-                      {/* <Calendar size={16} /> */}
-                      Oxirgi tashrif:{" "}
-                      {moment(patient.lastVisit).format("DD.MM.YYYY")}
+                      Oxirgi tashrif: {moment(patient.lastVisit).format("DD.MM.YYYY")}
                     </span>
                     <div
                       style={{ display: "flex", gap: "20px" }}
                       className="patient-stats"
                     >
                       <span>Tarixlar: {patient.stories?.length || 0}</span>
-                      <span>
-                        Xona tarixi: {patient.roomStories?.length || 0}
-                      </span>
+                      <span>Xona tarixi: {patient.roomStories?.length || 0}</span>
                     </div>
                   </div>
                 </div>
@@ -311,6 +326,8 @@ const MedicalDashboard = () => {
         </div>
       ) : (
         <PatientDetailsView
+          setViewHistory={setViewHistory}
+          patientId={patientId}
           patient={selectedPatient}
           patientServicesData={
             patientServicesData?.innerData || roomServicesData?.innerData || []
