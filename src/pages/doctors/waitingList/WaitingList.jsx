@@ -7,8 +7,11 @@ import { Button, Table, Modal } from "antd";
 import ModelCheck from "../../../components/check/modelCheck/ModelCheck";
 
 function WaitingList() {
-  const { data: redirectedPatients, isLoading } =
-    useGetRedirectedPatientsQuery();
+  const {
+    data: redirectedPatients,
+    isLoading,
+    refetch,
+  } = useGetRedirectedPatientsQuery();
   const [updateRedirectedPatient] = useUpdateRedirectedPatientMutation();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -39,6 +42,7 @@ function WaitingList() {
 
     try {
       const response = await updateRedirectedPatient(data).unwrap();
+
       const story = {
         response: {
           doctor: {
@@ -127,10 +131,10 @@ function WaitingList() {
       render: (services) =>
         services && services.length > 0
           ? services.map((s) => (
-            <div key={s._id}>
-              {s.name} - {s.price} so'm
-            </div>
-          ))
+              <div key={s._id}>
+                {s.name} - {s.price} so'm
+              </div>
+            ))
           : "-",
     },
     {

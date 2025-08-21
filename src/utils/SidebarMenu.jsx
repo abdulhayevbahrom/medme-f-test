@@ -57,11 +57,11 @@ export const menuItems = {
       label: "Laboratoriya Kalkulyatorlari",
       icon: <BiTestTube size={20} />,
     },
-    {
-      path: "/waiting-list",
-      label: "Yo'naltirilgan bemorlar",
-      icon: <FaRegClock size={20} />,
-    },
+    // {
+    //   path: "/waiting-list",
+    //   label: "Yo'naltirilgan bemorlar",
+    //   icon: <FaRegClock size={20} />,
+    // },
   ],
   reception: [
     {
@@ -99,15 +99,20 @@ export const menuItems = {
       path: "/nightShift",
       label: "Smena Boshqaruvi",
     },
-    {
-      icon: <FaHistory size={20} />, // Changed to FaHistory for history
-      path: "/history",
-      label: "Tarix",
-    },
+    // {
+    //   icon: <FaHistory size={20} />, // Changed to FaHistory for history
+    //   path: "/history",
+    //   label: "Tarix",
+    // },
     {
       icon: <FaCalculator size={20} />,
       path: "/roomServices",
       label: "Xonalar xizmatlari",
+    },
+    {
+      path: "/waiting-list",
+      label: "Yo'naltirilgan bemorlar",
+      icon: <FaRegClock size={20} />,
     },
   ],
   director: [
@@ -126,47 +131,47 @@ export const menuItems = {
       path: "/setting",
       label: "Sozlamalar",
     },
-    {
-      icon: <FaNotesMedical size={20} />, // Changed to FaNotesMedical for reception department
-      label: "Qabul bo‘limi",
-      children: [
-        {
-          icon: <FaClipboardList size={20} />,
-          path: "/reception",
-          label: "Ro'yxatdan o'tkazish",
-        },
-        {
-          icon: <FaMoneyBillWave />,
-          path: "/expense",
-          label: "Harajatlar",
-        },
-        {
-          icon: <FaHistory size={20} />, // Changed to FaHistory for history
-          path: "/history",
-          label: "Tarix",
-        },
-        {
-          icon: <FaBed size={20} />, // Changed to FaBed for treatment/cabins
-          path: "/cabins",
-          label: "Davolanish",
-        },
-        {
-          icon: <FaCalendarCheck size={20} />, // Changed to FaCalendarCheck for attendance
-          path: "/attendance",
-          label: "Davomat",
-        },
-        {
-          icon: <MdOutlineMedicalServices size={20} />, // Changed to FaCalendarCheck for attendance
-          path: "/service",
-          label: "Xizmatlar",
-        },
-        {
-          icon: <Moon size={20} />, // Changed to FaCalendarCheck for attendance
-          path: "/nightShift",
-          label: "Smena Boshqaruvi",
-        },
-      ],
-    },
+    // {
+    //   icon: <FaNotesMedical size={20} />, // Changed to FaNotesMedical for reception department
+    //   label: "Qabul bo‘limi",
+    //   children: [
+    //     {
+    //       icon: <FaClipboardList size={20} />,
+    //       path: "/reception",
+    //       label: "Ro'yxatdan o'tkazish",
+    //     },
+    //     {
+    //       icon: <FaMoneyBillWave />,
+    //       path: "/expense",
+    //       label: "Harajatlar",
+    //     },
+    //     {
+    //       icon: <FaHistory size={20} />, // Changed to FaHistory for history
+    //       path: "/history",
+    //       label: "Tarix",
+    //     },
+    //     {
+    //       icon: <FaBed size={20} />, // Changed to FaBed for treatment/cabins
+    //       path: "/cabins",
+    //       label: "Davolanish",
+    //     },
+    //     {
+    //       icon: <FaCalendarCheck size={20} />, // Changed to FaCalendarCheck for attendance
+    //       path: "/attendance",
+    //       label: "Davomat",
+    //     },
+    //     {
+    //       icon: <MdOutlineMedicalServices size={20} />, // Changed to FaCalendarCheck for attendance
+    //       path: "/service",
+    //       label: "Xizmatlar",
+    //     },
+    //     {
+    //       icon: <Moon size={20} />, // Changed to FaCalendarCheck for attendance
+    //       path: "/nightShift",
+    //       label: "Smena Boshqaruvi",
+    //     },
+    //   ],
+    // },
     {
       icon: <FaPlus size={20} />, // Changed to FaHistory for history
       path: "/roomServices",
@@ -182,10 +187,10 @@ export const menuItems = {
       label: "Laboratoriya Kalkulyatorlari",
       icon: <BiTestTube size={20} />,
     },
-    {
-      path: "/waiting-list",
-      label: "Yo'naltirilgan bemorlar",
-      icon: <FaRegClock size={20} />,
-    },
+    // {
+    //   path: "/waiting-list",
+    //   label: "Yo'naltirilgan bemorlar",
+    //   icon: <FaRegClock size={20} />,
+    // },
   ],
 };

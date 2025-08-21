@@ -8,9 +8,10 @@ import PrintCheckList from '../analysis/PrintCheckList';
 import { useSubmitAnalisMutation } from "../../../context/storyApi";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import "./style.css";
+import "./css/style.css";
 
-const BioKimyoviy = ({ userId, handleCompleteAnalis }) => {
+
+const BioKimyoviy = ({ userId, data, handleCompleteAnalis }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [activeTab, setActiveTab] = useState("0");
@@ -103,6 +104,7 @@ const BioKimyoviy = ({ userId, handleCompleteAnalis }) => {
       return {
         storyId: userId,
         results,
+        status: "done"
       };
     },
     [analysisGroups, userId]
@@ -293,7 +295,7 @@ const BioKimyoviy = ({ userId, handleCompleteAnalis }) => {
         </Tabs>
 
         <div style={{ display: "none" }}>
-          <PrintCheckList ref={contentRef} result={result} />
+          <PrintCheckList ref={contentRef} data={data} result={result} />
         </div>
       </Spin>
 
@@ -313,3 +315,5 @@ const BioKimyoviy = ({ userId, handleCompleteAnalis }) => {
 };
 
 export default BioKimyoviy;
+
+

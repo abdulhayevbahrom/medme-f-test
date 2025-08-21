@@ -48,6 +48,7 @@ import {
   useAssignRoomServicesMutation,
   useGetPatientServicesByPatientIdQuery,
 } from "../../../context/choosedRoomServicesApi";
+import PatientDetailsView from "../../reseption/history/PatientDetailsView";
 
 const ConsultationView = () => {
   const navigate = useNavigate();
@@ -435,8 +436,21 @@ const ConsultationView = () => {
     }, 1000);
   };
 
+  const [viewHistory, setViewHistory] = useState(false);
+
   return (
     <div className="consultation-container">
+      {viewHistory ? (
+        <PatientDetailsView
+          patient={selectedPatient}
+          patientServicesData={
+            patientServicesData?.innerData || roomServicesData?.innerData || []
+          }
+          // setSelectedPatient={() => setViewHistory(false)}
+        />
+      ) : (
+        ""
+      )}
       <div className="consultation-header">
         <div className="detail-item-conat">
           <button className="back-btn" onClick={() => navigate(-1)}>
@@ -451,6 +465,7 @@ const ConsultationView = () => {
           </div>
         </div>
         <div className="detail-item-conat">
+          <button onClick={() => setViewHistory(true)}>tarix</button>
           <div className="detail-item-box">
             <div className="detail-item">
               <MdCall className="detail-icon" />
@@ -626,6 +641,7 @@ const ConsultationView = () => {
       {specialization === "laborant" ? (
         <>
           <Analysis
+            data={selectedPatient}
             handleCompleteAnalis={handleCompleteAnalis}
             userId={userId}
           />

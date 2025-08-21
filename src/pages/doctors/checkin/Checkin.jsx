@@ -21,10 +21,12 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./style.css";
 import socket from "../../../socket";
+import moment from "moment";
 
 // Constants for table headers
 const TABLE_HEADERS = [
   "№",
+  "Sana",
   "Bemorning ismi",
   "Yoshi",
   "Tashrif",
@@ -287,9 +289,19 @@ const Checkin = () => {
                   className={`patient-row ${patient.view ? "completed" : ""}`}
                 >
                   <td className="order-number">{patient.order_number}</td>
+                  {/* <td>{moment(patient.createdAt).format("DD-MM-YYYY")}</td> */}
+                  <td>
+                    {moment(patient.createdAt).isSame(moment(), "day") ? (
+                      <p style={{ color: "green", fontWeight: "bold" }}>
+                        Bugun
+                      </p>
+                    ) : (
+                      moment(patient.createdAt).format("DD-MM-YYYY")
+                    )}
+                  </td>
                   <td>
                     <div className="patient-name">
-                      <User className="patient-icon" aria-hidden="true" />
+                      {/* <User className="patient-icon" aria-hidden="true" /> */}
                       <div>
                         <strong>{patient.patientId.name}</strong>
                         <br />
